@@ -1,21 +1,17 @@
-<script>
-	//import type { Spell } from './api/spells/Spell';
-
-	const options = {
-		method: 'GET'
-	};
-
-	const spells = fetch('http://localhost:8080/api/v1/spell', options)
-		.then((response) => response.json())
-		.then((response) => console.log(response))
-		.catch((err) => console.error(err));
+<script lang="ts">
+	export let data;
+	const spells = data.spells;
 </script>
 
-{#await spells then}
-	{console.log(spells)}
-{/await}
+<h1>Spells</h1>
 
-<h1>Hola mundo</h1>
+<ul>
+	{#each spells as spell, index}
+		<li>{index} – {spell.title}</li>
+
+		{console.log(spell)}
+	{/each}
+</ul>
 
 <style>
 	h1 {

@@ -1,3 +1,4 @@
+
 export interface Spell {
 	englishTitle: string;
 	title: string;
