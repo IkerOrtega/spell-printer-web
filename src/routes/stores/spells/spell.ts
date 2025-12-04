@@ -4,7 +4,7 @@ import type { Spell } from './../../api/spells/Spell';
 
 export const spellsStore = writable<Spell[]>([]);
 
-// User controls
+// Filters
 export const searchQuery = writable('');
 export const typeFilter = writable<string | null>(null);
 export const levelFilter = writable<string | null>(null);
