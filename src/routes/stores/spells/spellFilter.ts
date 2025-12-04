@@ -1,6 +1,6 @@
 // src/lib/stores/spells.ts
 import { derived, writable } from 'svelte/store';
-import type { Spell } from './../../api/spells/Spell';
+import type { Spell } from '../../api/spells/Spell';
 
 export const spellsStore = writable<Spell[]>([]);
 

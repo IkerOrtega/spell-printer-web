@@ -8,7 +8,7 @@
 		sortDir,
 		spellsStore,
 		typeFilter
-	} from './stores/spells/spell.ts';
+	} from './stores/spells/spellFilter.ts';
 	export let data;
 
 	// Load spells from backend into the store
