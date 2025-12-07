@@ -18,15 +18,8 @@
 	const levels = [
 		...new Set(
 			data.spells
-				.map((s) => s.level)
-				.sort((a, b) => {
-					const left = a;
-					const right = b;
-
-					if (left < right) return -1;
-					if (left > right) return 1;
-					return 0;
-				})
+				.map((s) => Number.parseInt(s.level))
+				.sort((a, b) => a - b)
 		)
 	];
 </script>
