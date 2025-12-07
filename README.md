@@ -1,3 +1,11 @@
+# TODO
+
+- Vista de tarjetas, 4 por fila?
+- Poder seleccionar tarjetas
+- Botón limpiar selección
+- Formatear para pdf
+- Fondos y bordes de carta
+
 # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
