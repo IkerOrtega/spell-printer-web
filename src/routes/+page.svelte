@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SpellComponent from './api/spells/SpellComponent.svelte';
 	import {
 		filteredSpells,
 		levelFilter,
@@ -7,7 +8,7 @@
 		sortDir,
 		spellsStore,
 		typeFilter
-	} from './stores/spells/spell.ts';
+	} from './stores/spells/spellFilter.ts';
 	export let data;
 
 	// Load spells from backend into the store
@@ -24,29 +25,29 @@
 	];
 </script>
 
-<h1 class="title">Spell Browser</h1>
+<h1 class="title">Buscador de Hechizos.</h1>
 
 <section class="controls">
-	<input type="text" placeholder="Search spells..." bind:value={$searchQuery} />
+	<input type="text" placeholder="Buscar por título..." bind:value={$searchQuery} />
 
 	<select bind:value={$typeFilter}>
-		<option value={null}>All Types</option>
+		<option value={null}>Todos los tipos</option>
 		{#each types as t}
 			<option value={t}>{t}</option>
 		{/each}
 	</select>
 
 	<select bind:value={$levelFilter}>
-		<option value={null}>All Levels</option>
+		<option value={null}>Todos los niveles</option>
 		{#each levels as lvl}
 			<option value={lvl}>{lvl}</option>
 		{/each}
 	</select>
 
 	<select bind:value={$sortBy}>
-		<option value={null}>No Sorting</option>
-		<option value="title">Sort by Title</option>
-		<option value="level">Sort by Level</option>
+		<option value={null}>Sin filtro</option>
+		<option value="title">Filtrar por título</option>
+		<option value="level">Fitrar por nivel</option>
 	</select>
 
 	<select bind:value={$sortDir}>
@@ -55,15 +56,16 @@
 	</select>
 </section>
 
-<ul class="spell-list">
-	{#each $filteredSpells as spell}
-		<li class="spell-card">
-			<strong>{spell.title}</strong>
-			<div>Type: {spell.type}</div>
-			<div>Level: {spell.level}</div>
-		</li>
-	{/each}
-</ul>
+<section class="gridContainer">
+	<ul class="spell-list">
+		{#each $filteredSpells as spell}
+			<SpellComponent {spell}></SpellComponent>
+		{/each}
+	</ul>
+	<div>
+		<p>De alguna forma mágica aquí se van a pintar las cartas</p>
+	</div>
+</section>
 
 <style>
 	.title {
@@ -81,9 +83,8 @@
 		display: grid;
 		gap: 1rem;
 	}
-	.spell-card {
-		padding: 1rem;
-		border-radius: 0.5rem;
-		background: #f3f3f3;
+	.gridContainer {
+		display: grid;
+		grid-template-columns: 0.2fr 0.8fr;
 	}
 </style>
