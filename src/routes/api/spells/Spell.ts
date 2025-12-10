@@ -17,4 +17,5 @@ export interface Spell {
 	duration: string;
 	description: string;
 	heightenings: string;
+    selected: boolean;
 }

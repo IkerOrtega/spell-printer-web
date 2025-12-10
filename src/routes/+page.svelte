@@ -23,9 +23,10 @@
 				.sort((a, b) => a - b)
 		)
 	];
+
 </script>
 
-<h1 class="title">Buscador de Hechizos.</h1>
+<h1 class="title">Buscador de Conjuros.</h1>
 
 <section class="controls">
 	<input type="text" placeholder="Buscar por título..." bind:value={$searchQuery} />
