@@ -1,70 +1,84 @@
 <script lang="ts">
-	import SpellComponent from './api/spells/SpellComponent.svelte';
-	import {
-		filteredSpells,
-		levelFilter,
-		searchQuery,
-		sortBy,
-		sortDir,
-		spellsStore,
-		typeFilter
-	} from './stores/spells/spellFilter.ts';
-	export let data;
+	import type { Spell } from '$lib/Spell';
+	import type { SpellResponse } from '../lib/SpellResponse.ts';
+	import SelectedSpellsComponent from './SelectedSpellsComponent.svelte';
+	import SpellComponent from './SpellComponent.svelte';
 
-	// Load spells from backend into the store
-	$spellsStore = data.spells;
+	let spells = $state<Spell[]>([]);
+	let loading = $state(true);
+	let error = $state<string | null>(null);
 
-	// Extract available types and levels dynamically
-	const types = [...new Set(data.spells.map((s) => s.type))];
-	const levels = [
-		...new Set(
-			data.spells
-				.map((s) => Number.parseInt(s.level))
-				.sort((a, b) => a - b)
-		)
-	];
+	async function loadSpells() {
+		try {
+			const res = await fetch('http://localhost:8082/api/v1/spell');
 
+			if (!res.ok) {
+				throw new Error(`HTTP ${res.status}`);
+			}
+
+			const data: SpellResponse = await res.json();
+
+			// 🔥 Adaptamos datos de API → UI
+			spells = data.spellList.map((spell) => ({
+				...spell
+			}));
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Unknow error';
+		} finally {
+			loading = false;
+		}
+	}
+
+	loadSpells();
+
+	// Search by title
+	let search = $state('');
+	let filteredSpells = $derived.by(() => {
+		const query = search.trim().toLowerCase();
+
+		if (!query) return spells;
+
+		return spells.filter((spell) => spell.title.toLowerCase().includes(query));
+	});
+
+	// Slected Spells state. https://svelte.dev/docs/svelte/$state
+	let selectedIds = $state<Set<string>>(new Set());
+
+	function toggleSpell(id: string) {
+		const next = new Set(selectedIds);
+
+		next.has(id) ? next.delete(id) : next.add(id);
+
+		selectedIds = next;
+	}
+
+	// Selected Spells.
+	let selectedSpells = $derived.by(() =>
+		spells.filter((spell) => selectedIds.has(spell.englishTitle))
+	);
 </script>
 
 <h1 class="title">Buscador de Conjuros.</h1>
 
 <section class="controls">
-	<input type="text" placeholder="Buscar por título..." bind:value={$searchQuery} />
-
-	<select bind:value={$typeFilter}>
-		<option value={null}>Todos los tipos</option>
-		{#each types as t}
-			<option value={t}>{t}</option>
-		{/each}
-	</select>
-
-	<select bind:value={$levelFilter}>
-		<option value={null}>Todos los niveles</option>
-		{#each levels as lvl}
-			<option value={lvl}>{lvl}</option>
-		{/each}
-	</select>
-
-	<select bind:value={$sortBy}>
-		<option value={null}>Sin filtro</option>
-		<option value="title">Filtrar por título</option>
-		<option value="level">Fitrar por nivel</option>
-	</select>
-
-	<select bind:value={$sortDir}>
-		<option value="asc">Asc</option>
-		<option value="desc">Desc</option>
-	</select>
+	<label class="search">
+		<span>Buscar hechizo</span>
+		<input type="search" placeholder="Ej: fuego, curación..." bind:value={search} />
+	</label>
 </section>
 
 <section class="gridContainer">
 	<ul class="spell-list">
-		{#each $filteredSpells as spell}
-			<SpellComponent {spell}></SpellComponent>
+		{#each filteredSpells as spell}
+			<SpellComponent
+				{spell}
+				selected={selectedIds.has(spell.englishTitle)}
+				onToggle={() => toggleSpell(spell.englishTitle)}
+			/>
 		{/each}
 	</ul>
 	<div>
-		<p>De alguna forma mágica aquí se van a pintar las cartas</p>
+		<SelectedSpellsComponent spells={selectedSpells} />
 	</div>
 </section>
 

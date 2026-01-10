@@ -1,4 +1,4 @@
-import type { Spell } from './Spell';
+import type { Spell } from '$lib/Spell';
 
 
 export interface SpellResponse {
