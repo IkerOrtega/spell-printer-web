@@ -1,35 +1,23 @@
 <script lang="ts">
-	import type { Spell } from '$lib/Spell';
-	import type { SpellResponse } from '../lib/SpellResponse.ts';
 	import SelectedSpellsComponent from './SelectedSpellsComponent.svelte';
 	import SpellComponent from './SpellComponent.svelte';
+	import {loadSpells} from "$lib/hooks/useSpells.svelte";
+	import type {Spell} from "$lib/Spell";
+	import PrintableSpellComponent from "./PrintableSpellComponent.svelte";
 
 	let spells = $state<Spell[]>([]);
-	let loading = $state(true);
-	let error = $state<string | null>(null);
 
-	async function loadSpells() {
-		try {
-			const res = await fetch('http://localhost:8082/api/v1/spell');
-
-			if (!res.ok) {
-				throw new Error(`HTTP ${res.status}`);
-			}
-
-			const data: SpellResponse = await res.json();
-
-			// 🔥 Adaptamos datos de API → UI
-			spells = data.spellList.map((spell) => ({
-				...spell
-			}));
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Unknow error';
-		} finally {
-			loading = false;
-		}
+	function printPdf() {
+		window.print();
 	}
 
-	loadSpells();
+	loadSpells().then(fetchedSpells => {
+		if(fetchedSpells) {
+			spells = fetchedSpells;
+		} else {
+			spells = [];
+		}
+	});
 
 	// Search by title
 	let search = $state('');
@@ -57,49 +45,81 @@
 		spells.filter((spell) => selectedIds.has(spell.englishTitle))
 	);
 </script>
+<div class="body">
+	<h1 class="title">Buscador de Conjuros.</h1>
 
-<h1 class="title">Buscador de Conjuros.</h1>
-
-<section class="controls">
-	<label class="search">
-		<span>Buscar hechizo</span>
-		<input type="search" placeholder="Ej: fuego, curación..." bind:value={search} />
-	</label>
-</section>
-
-<section class="gridContainer">
-	<ul class="spell-list">
-		{#each filteredSpells as spell}
-			<SpellComponent
-				{spell}
-				selected={selectedIds.has(spell.englishTitle)}
-				onToggle={() => toggleSpell(spell.englishTitle)}
-			/>
-		{/each}
-	</ul>
+	<section class="controls">
+		<label class="search">
+			<span>Buscar hechizo</span>
+			<input type="search" placeholder="Ej: fuego, curación..." bind:value={search} />
+		</label>
+		<button class="print" onclick="{printPdf}">Imprimir</button>
+	</section>
+<section class="spellContainer">
 	<div>
 		<SelectedSpellsComponent spells={selectedSpells} />
 	</div>
+	<div>
+		<ul class="spell-list">
+			{#each filteredSpells as spell}
+				<PrintableSpellComponent
+					{spell}
+					selected={selectedIds.has(spell.englishTitle)}
+					onToggle={() => toggleSpell(spell.englishTitle)}
+				/>
+			{/each}
+		</ul>
+	</div>
 </section>
-
+	<section class="print-only">
+		<ul class="spell-list">
+			{#each selectedSpells as spell}
+				<PrintableSpellComponent
+						{spell}
+						selected={selectedIds.has(spell.englishTitle)}
+						onToggle={() => toggleSpell(spell.englishTitle)}
+				/>
+			{/each}
+		</ul>
+	</section>
+</div>
 <style>
+
+	.spellContainer {
+		display: grid;
+		grid-template-columns: 20% 80%;
+	}
+	.print-only {
+		display: none !important;
+	}
+
 	.title {
 		font-size: 2rem;
 		margin-bottom: 1rem;
 	}
 	.controls {
 		display: flex;
-		gap: 1rem;
+		/*gap: 1rem;*/
 		margin-bottom: 1.5rem;
 	}
 	.spell-list {
+		width: 21cm;
 		list-style: none;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
 		padding: 0;
-		display: grid;
-		gap: 1rem;
 	}
-	.gridContainer {
-		display: grid;
-		grid-template-columns: 0.2fr 0.8fr;
+
+	@media print {
+		.body > * {
+			display: none !important;
+		}
+		.print-only {
+			display: block !important;
+		}
+
+
 	}
+
 </style>

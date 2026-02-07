@@ -1,4 +1,4 @@
-import { PUBLIC_SPELLS_API } from '$env/static/private';
+import { PUBLIC_SPELLS_API } from '$env/static/public';
 import type { SpellResponse } from '$lib/SpellResponse';
 
 export async function fetchSpells(): Promise<SpellResponse> {

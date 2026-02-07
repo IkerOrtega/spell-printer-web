@@ -19,6 +19,7 @@
 
 <style>
 	.spell-card {
+		width: 20rem;
 		padding: 1rem;
 		border-radius: 0.5rem;
 		background: #f3f3f3;

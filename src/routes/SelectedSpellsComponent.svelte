@@ -8,8 +8,9 @@
 	let { spells }: Props = $props();
 </script>
 
+<h3>Hechizos seleccionados</h3>
 <section class="selected-spells">
-	<h3>Hechizos seleccionados</h3>
+
 
 	{#if spells.length === 0}
 		<p class="empty">No hay hechizos seleccionados</p>
@@ -23,3 +24,16 @@
 		</ul>
 	{/if}
 </section>
+
+<style>
+	h3 {
+		text-align: center;
+	}
+	.selected-spells {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+
+</style>
