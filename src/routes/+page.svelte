@@ -1,15 +1,10 @@
 <script lang="ts">
 	import SelectedSpellsComponent from './SelectedSpellsComponent.svelte';
-	import SpellComponent from './SpellComponent.svelte';
 	import {loadSpells} from "$lib/hooks/useSpells.svelte";
 	import type {Spell} from "$lib/Spell";
-	import PrintableSpellComponent from "./PrintableSpellComponent.svelte";
+	import SpellComponent from "./PrintableSpellComponent.svelte";
 
 	let spells = $state<Spell[]>([]);
-
-	function printPdf() {
-		window.print();
-	}
 
 	loadSpells().then(fetchedSpells => {
 		if(fetchedSpells) {
@@ -29,7 +24,7 @@
 		return spells.filter((spell) => spell.title.toLowerCase().includes(query));
 	});
 
-	// Slected Spells state. https://svelte.dev/docs/svelte/$state
+	// Selected Spells state. https://svelte.dev/docs/svelte/$state
 	let selectedIds = $state<Set<string>>(new Set());
 
 	function toggleSpell(id: string) {
@@ -46,14 +41,11 @@
 	);
 </script>
 <div class="body">
-	<h1 class="title">Buscador de Conjuros.</h1>
-
 	<section class="controls">
 		<label class="search">
-			<span>Buscar hechizo</span>
+			<span>Buscar conjuros</span>
 			<input type="search" placeholder="Ej: fuego, curación..." bind:value={search} />
 		</label>
-		<button class="print" onclick="{printPdf}">Imprimir</button>
 	</section>
 <section class="spellContainer">
 	<div>
@@ -62,7 +54,7 @@
 	<div>
 		<ul class="spell-list">
 			{#each filteredSpells as spell}
-				<PrintableSpellComponent
+				<SpellComponent
 					{spell}
 					selected={selectedIds.has(spell.englishTitle)}
 					onToggle={() => toggleSpell(spell.englishTitle)}
@@ -74,9 +66,9 @@
 	<section class="print-only">
 		<ul class="spell-list">
 			{#each selectedSpells as spell}
-				<PrintableSpellComponent
+				<SpellComponent
 						{spell}
-						selected={selectedIds.has(spell.englishTitle)}
+						selected={false}
 						onToggle={() => toggleSpell(spell.englishTitle)}
 				/>
 			{/each}
@@ -85,6 +77,11 @@
 </div>
 <style>
 
+	.search {
+		input {
+			border: black solid 1px;
+		}
+	}
 	.spellContainer {
 		display: grid;
 		grid-template-columns: 20% 80%;
@@ -93,10 +90,7 @@
 		display: none !important;
 	}
 
-	.title {
-		font-size: 2rem;
-		margin-bottom: 1rem;
-	}
+
 	.controls {
 		display: flex;
 		/*gap: 1rem;*/

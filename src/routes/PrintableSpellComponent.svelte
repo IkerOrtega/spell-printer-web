@@ -37,7 +37,8 @@
 		 return imgPath;
 	}
 </script>
-<li class="card cardBlock" class:selected onclick={onToggle}>
+<li class="card cardBlock" class:selected>
+	<button onclick={onToggle} >
 		<div class="front">
 			<div class="body">
 				<h3 class="name lined srname">{spell.title} <img src="{getActionImg(spell.actionType)}" alt="{spell.actionType}"/></h3>
@@ -64,24 +65,25 @@
 			<b class="class srclass">{spell.traditions}</b>
 			<b class="type srtype">{spell.type} {spell.level}</b>
 		</div>
-</li>
+		</button>
+	</li>
+
+
 
 <style>
-	.selected {
-		border-color: black !important;
-		background: black !important;
+	@media screen {
+		.selected {
+			border-color: black !important;
+			background: black !important;
+		}
 	}
 		.card {
 			float: left;
 			display: table;
+			width: 33%;
 
-			@media screen {
-				width: 33%;
-
-			}
 			@media print {
 				break-inside: avoid-page;
-				width: 33%;
 			}
 
 			height: 3.5in;

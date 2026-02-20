@@ -8,12 +8,12 @@
 	let { spells }: Props = $props();
 </script>
 
-<h3>Hechizos seleccionados</h3>
+<h3>Conjuros seleccionados</h3>
 <section class="selected-spells">
 
 
 	{#if spells.length === 0}
-		<p class="empty">No hay hechizos seleccionados</p>
+		<p class="empty">No hay conjuros seleccionados</p>
 	{:else}
 		<ul>
 			{#each spells as spell}
